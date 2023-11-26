@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+//widgets dependen de ella para cualquier cambio
 class LoginFormProvider extends ChangeNotifier {
   GlobalKey<FormState> formKey = new GlobalKey<FormState>();
 

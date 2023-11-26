@@ -6,6 +6,7 @@ class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
+  //tiene un boton con loggout
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthService>(context, listen: false);
     return Scaffold(

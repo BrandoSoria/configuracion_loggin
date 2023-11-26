@@ -4,9 +4,11 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
 class AuthService extends ChangeNotifier {
-  final String _baseUrl = 'loginprueba.somee.com';
+  //solicitudes http
+  final String _baseUrl = 'jwt.somee.com';
   //final String _firebaseToken = 'AIzaSyCD36g1c5N9WPp4PCmVwt2jEzdWIGtglso';
 
+  //uso de la libreria para almacenar tokens
   final storage = new FlutterSecureStorage();
 
   // Si retornamos algo, es un error, si no, todo bien!
@@ -17,7 +19,7 @@ class AuthService extends ChangeNotifier {
       //'returnSecureToken': true
     };
 
-    final url = Uri.http(_baseUrl, '/api/Cuentas/registrar');
+    final url = Uri.http(_baseUrl, '/api/Cuentas/Registrar');
 
     final resp = await http.post(url,
         headers: {"Content-Type": "application/json"},
@@ -40,7 +42,7 @@ class AuthService extends ChangeNotifier {
       'email': email,
       'password': password
     };
-    final url = Uri.https(_baseUrl, '/api/Cuentas/login');
+    final url = Uri.https(_baseUrl, '/api/Cuentas/Login');
 
     //final url2 = Uri.https(_baseUrl, '/Prueba/on');
 

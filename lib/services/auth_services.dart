@@ -23,6 +23,9 @@ class AuthService extends ChangeNotifier {
         headers: {"Content-Type": "application/json"},
         body: json.encode(authData));
 
+        print(resp.body);
+
+
     final Map<String, dynamic> decodedResp = json.decode(resp.body);
 
     if (decodedResp.containsKey('token')) {

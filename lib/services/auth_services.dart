@@ -4,77 +4,71 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
 class AuthService extends ChangeNotifier {
-  // Solicitudes HTTP
-  final String _baseUrl = 'http://jwt.somee.com';
-  final storage = FlutterSecureStorage();
+  final String _baseUrl = 'jwt.somee.com';
+  //final String _firebaseToken = 'AIzaSyCD36g1c5N9WPp4PCmVwt2jEzdWIGtglso';
 
+  final storage = new FlutterSecureStorage();
+
+  // Si retornamos algo, es un error, si no, todo bien!
   Future<String?> createUser(String email, String password) async {
-    final authData = {
+    final Map<String, dynamic> authData = {
       'email': email,
       'password': password,
+      //'returnSecureToken': true
     };
 
-    final url = Uri.parse('$_baseUrl/api/Cuentas/registrar');
+    final url = Uri.http(_baseUrl, '/api/Cuentas/registrar');
 
-    try {
-      final resp = await http.post(
-        url,
+    final resp = await http.post(url,
         headers: {"Content-Type": "application/json"},
-        body: json.encode(authData),
-      );
+        body: json.encode(authData));
 
-      print('Respuesta del servidor: ${resp.body}');
+    final Map<String, dynamic> decodedResp = json.decode(resp.body);
 
-      if (resp.statusCode == 200) {
-        final Map<String, dynamic> decodedResp = json.decode(resp.body);
-
-        if (decodedResp.containsKey('token')) {
-          await storage.write(key: 'token', value: decodedResp['token']);
-          return null;
-        } else {
-          return 'La respuesta del servidor no contiene un token';
-        }
-      } else {
-        return 'Error en la solicitud: ${resp.reasonPhrase}';
-      }
-    } catch (e) {
-      print('Error en la solicitud: $e');
-      return 'Error en la solicitud';
+    if (decodedResp.containsKey('token')) {
+      // Token hay que guardarlo en un lugar seguro
+      await storage.write(key: 'token', value: decodedResp['token']);
+      // decodedResp['idToken'];
+      return null;
+    } else {
+      return decodedResp['error']['message'];
     }
   }
 
   Future<String?> login(String email, String password) async {
-    final authData = {
+    final Map<String, dynamic> authData = {
       'email': email,
-      'password': password,
+      'password': password
     };
+    final url = Uri.https(_baseUrl, '/api/Cuentas/login');
 
-    final url = Uri.parse('$_baseUrl/api/Cuentas/Login');
+    //final url2 = Uri.https(_baseUrl, '/Prueba/on');
 
-    try {
-      final resp = await http.post(
-        url,
+    /*final resp2 = await http.get(url2, headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+      'Accept': 'application/json'
+    });*/
+
+    final resp = await http.post(url,
         headers: {"Content-Type": "application/json"},
-        body: json.encode(authData),
-      );
+        body: json.encode(authData));
 
-      print('Respuesta del servidor: ${resp.body}');
+    /*final resp = await http.post(url,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Accept': 'application/json'
+        },
+        body: json.encode(authData));*/
 
-      if (resp.statusCode == 200) {
-        final Map<String, dynamic> decodedResp = json.decode(resp.body);
+    final Map<String, dynamic> decodedResp = json.decode(resp.body);
 
-        if (decodedResp.containsKey('token')) {
-          await storage.write(key: 'token', value: decodedResp['token']);
-          return null;
-        } else {
-          return 'La respuesta del servidor no contiene un token';
-        }
-      } else {
-        return 'Error en la solicitud: ${resp.reasonPhrase}';
-      }
-    } catch (e) {
-      print('Error en la solicitud: $e');
-      return 'Error en la solicitud';
+    if (decodedResp.containsKey('token')) {
+      // Token hay que guardarlo en un lugar seguro
+      // decodedResp['idToken'];
+      await storage.write(key: 'token', value: decodedResp['token']);
+      return null;
+    } else {
+      return decodedResp['error']['message'];
     }
   }
 
